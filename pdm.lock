@@ -67,12 +67,26 @@ requires_python = ">=3.7"
 summary = "Safely add untrusted strings to HTML/XML markup."
 
 [[package]]
+name = "peewee"
+version = "3.16.2"
+summary = "a little orm"
+
+[[package]]
 name = "werkzeug"
 version = "2.3.4"
 requires_python = ">=3.8"
 summary = "The comprehensive WSGI web application library."
 dependencies = [
     "MarkupSafe>=2.1.1",
+]
+
+[[package]]
+name = "wtf-peewee"
+version = "3.0.4"
+summary = "WTForms integration for peewee models"
+dependencies = [
+    "peewee>=3.0.0",
+    "wtforms",
 ]
 
 [[package]]
@@ -87,8 +101,8 @@ dependencies = [
 [metadata]
 lock_version = "4.2"
 cross_platform = true
-groups = ["default"]
-content_hash = "sha256:f187a6e5040a49f0bfb8f5a568f70c946687a442e57e8c667ff8b4690b9bf710"
+groups = ["default", "dev"]
+content_hash = "sha256:1a322dffa5194f34fb35909dfe268c2216e67f74a5fef541340116f7b5a17219"
 
 [metadata.files]
 "blinker 1.6.2" = [
@@ -171,9 +185,15 @@ content_hash = "sha256:f187a6e5040a49f0bfb8f5a568f70c946687a442e57e8c667ff8b4690
     {url = "https://files.pythonhosted.org/packages/ea/60/2400ba59cf2465fa136487ee7299f52121a9d04b2cf8539ad43ad10e70e8/MarkupSafe-2.1.2-cp311-cp311-win_amd64.whl", hash = "sha256:e55e40ff0cc8cc5c07996915ad367fa47da6b3fc091fdadca7f5403239c5fec3"},
     {url = "https://files.pythonhosted.org/packages/f9/aa/ebcd114deab08f892b1d70badda4436dbad1747f9e5b72cffb3de4c7129d/MarkupSafe-2.1.2-cp310-cp310-musllinux_1_1_x86_64.whl", hash = "sha256:7313ce6a199651c4ed9d7e4cfb4aa56fe923b1adf9af3b420ee14e6d9a73df65"},
 ]
+"peewee 3.16.2" = [
+    {url = "https://files.pythonhosted.org/packages/a9/50/1dd5ea74c559df4afb8391f8d05f0fec685dbe8effba13bb9072901eb288/peewee-3.16.2.tar.gz", hash = "sha256:10769981198c7311f84a0ca8db892fa213303a8eb1305deb795a71e7bd606a91"},
+]
 "werkzeug 2.3.4" = [
     {url = "https://files.pythonhosted.org/packages/2d/bf/5a00bb4a70028f7c6000bc9394492154fa9ae3f5226187e3ddcd0aa5eca1/Werkzeug-2.3.4.tar.gz", hash = "sha256:1d5a58e0377d1fe39d061a5de4469e414e78ccb1e1e59c0f5ad6fa1c36c52b76"},
     {url = "https://files.pythonhosted.org/packages/c2/2f/f0dc628295bd23571c962d5a349307d9c8796a05bfca6571659eaded38e2/Werkzeug-2.3.4-py3-none-any.whl", hash = "sha256:48e5e61472fee0ddee27ebad085614ebedb7af41e88f687aaf881afb723a162f"},
+]
+"wtf-peewee 3.0.4" = [
+    {url = "https://files.pythonhosted.org/packages/9a/9c/1bb1f9fae1a7203122a5a8febe168dec3b6b0291db067d1700df5c480f2c/wtf-peewee-3.0.4.tar.gz", hash = "sha256:7136d845dbc051363ce8c3d1df7047fa703a1ff7a947cb201c380e050fd35244"},
 ]
 "wtforms 3.0.1" = [
     {url = "https://files.pythonhosted.org/packages/9a/7d/d4aa68f5bfcb91dd61a7faf0e862512ae7b3d531c41f24c217910aec0559/WTForms-3.0.1.tar.gz", hash = "sha256:6b351bbb12dd58af57ffef05bc78425d08d1914e0fd68ee14143b7ade023c5bc"},
