@@ -1,0 +1,19 @@
+
+[project]
+name = "matty_web"
+version = "0.1.0"
+description = "Abaqus Material Library on WEB"
+authors = [
+    {name = "Eric", email = "eric@simutech.com.tw"},
+]
+dependencies = [
+    "flask>=2.3.2",
+    "flask-admin>=1.6.1",
+]
+requires-python = ">=3.11"
+readme = "README.md"
+license = {text = "MIT"}
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
