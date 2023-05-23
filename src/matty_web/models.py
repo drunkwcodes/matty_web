@@ -1,3 +1,4 @@
+import logging
 import tomllib
 import uuid
 from datetime import datetime
@@ -47,6 +48,17 @@ class Post(BaseModel):
 
     def __str__(self):
         return self.title
+
+
+def init_db():
+    try:
+        User.create_table()
+        UserInfo.create_table()
+        Post.create_table()
+    except Exception as e:
+        logging.exception(e)
+        print("Create table error. See log for more information.")
+        # pass
 
 
 def add_user(username="", email="", password=""):

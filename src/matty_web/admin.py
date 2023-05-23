@@ -5,7 +5,7 @@ import flask_admin as fadmin
 from flask import Flask
 from flask_admin.contrib.peewee import ModelView
 
-from matty_web.models import Post, User, UserInfo
+from matty_web.models import Post, User, UserInfo, init_db
 from matty_web.utils import conf, init_data
 from matty_web.views import my_blueprint
 
@@ -44,14 +44,7 @@ def main():
     admin.add_view(UserAdmin(User))
     admin.add_view(PostAdmin(Post))
 
-    try:
-        User.create_table()
-        UserInfo.create_table()
-        Post.create_table()
-    except Exception as e:
-        logging.exception(e)
-        print("Create table error. See log for more information.")
-        # pass
+    init_db()
 
     # views
     app.register_blueprint(my_blueprint)
