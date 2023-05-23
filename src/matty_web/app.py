@@ -1,24 +1,23 @@
-from flask import Flask
-import flask_admin as fadmin
-import peewee
 import logging
+import os
+import tomllib
+from pathlib import Path
 
-from matty_web.models import User, UserInfo, Post
-from matty_web.views import my_blueprint, UserAdmin, PostAdmin
+import flask_admin as fadmin
+from flask import Flask
+
+from matty_web.models import Post, User, UserInfo
+from matty_web.utils import init_data
+from matty_web.views import my_blueprint
+
 
 def main():
+    init_data()
     app = Flask(__name__)
-    app.config['SECRET_KEY'] = '123456790'
-
-
+    app.config["SECRET_KEY"] = "123456790"
 
     logging.basicConfig(filename="matty_web.log", filemode="a")
     logging.getLogger().setLevel(logging.DEBUG)
-
-    admin = fadmin.Admin(app, name='Example: Peewee')
-
-    admin.add_view(UserAdmin(User))
-    admin.add_view(PostAdmin(Post))
 
     try:
         User.create_table()
@@ -32,8 +31,8 @@ def main():
     # views
     app.register_blueprint(my_blueprint)
 
-
     app.run(debug=True)
+
 
 if __name__ == "__main__":
     main()

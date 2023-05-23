@@ -1,7 +1,14 @@
-import peewee
+import tomllib
 import uuid
+from pathlib import Path
 
-db = peewee.SqliteDatabase('test.sqlite', check_same_thread=False)
+import peewee
+
+from .utils import conf
+
+db_path = Path(conf["data_folder"]) / "test.sqlite"
+db = peewee.SqliteDatabase(db_path, check_same_thread=False)
+
 
 class BaseModel(peewee.Model):
     class Meta:
@@ -11,6 +18,8 @@ class BaseModel(peewee.Model):
 class User(BaseModel):
     username = peewee.CharField(max_length=80)
     email = peewee.CharField(max_length=120)
+    password = peewee.CharField(max_length=60)
+    picture = peewee.CharField(max_length=120)
 
     def __str__(self):
         return self.username
@@ -23,7 +32,7 @@ class UserInfo(BaseModel):
     user = peewee.ForeignKeyField(User)
 
     def __str__(self):
-        return f'{self.key} - {self.value}'
+        return f"{self.key} - {self.value}"
 
 
 class Post(BaseModel):
