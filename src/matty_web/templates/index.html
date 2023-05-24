@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- 引入Materialize CSS的樣式表 -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/materialize.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
+
+  <!-- 可選：如果需要使用Material Icons圖示字體，請引入下面這行 -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  
+  <title>首頁</title>
+</head>
+<body>
+  <!-- 在這裡添加您的內容 -->
+  {% include 'navbar.html' %}
+  <script src="{{ url_for('static', filename='js/materialize.js') }}"></script>
+</body>
+</html>
