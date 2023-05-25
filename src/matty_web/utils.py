@@ -15,13 +15,25 @@ login_manager = LoginManager()
 
 
 def init_data():
-    conf_file = Path(__file__).with_name("conf.toml")
-    with open(conf_file, "rb") as f:
-        conf = tomllib.load(f)
+    
     dpath = conf["data_folder"]
     if not os.path.exists(Path(dpath)):
         os.mkdir(dpath)
-    # TODO: mkdir profile picture
+
+    # mkdir mbp static
+    sfiles = Path(dpath)/ "server_files"
+    if not os.path.exists(sfiles):
+        os.mkdir(sfiles)
+
+    # mkdir profile picture
+    pp = Path(dpath)/ "server_files" / "profile_pic"
+    if not os.path.exists(pp):
+        os.mkdir(pp)
+
+    # mkdir material files
+    mf = Path(dpath)/ "server_files" / "materials"
+    if not os.path.exists(mf):
+        os.mkdir(mf)
 
 
 def generate_password(length=5):

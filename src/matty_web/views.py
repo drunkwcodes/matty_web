@@ -1,15 +1,27 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import login_user
 from peewee import DoesNotExist
+from pathlib import Path
 
 from .models import User, UserInfo
-from .utils import login_manager, verify_password
+from .utils import login_manager, verify_password, conf
+from flask_login import current_user
 
-mbp = Blueprint("mbp", __name__)
+mbp = Blueprint("mbp", __name__)  # main bp
 
+# files bp
+fbp = Blueprint('fbp', __name__, static_folder=Path(conf["data_folder"]) / "server_files", static_url_path='/files')
 
+def render_with_pic(template_name="index.html"):
+    if current_user.picture:  # TODO: test pic
+        return render_template(template_name, pic=url_for("fbp.static", f"profile_pic/{current_user.picture}"))
+    else:
+        return render_template(template_name, pic=url_for("static", "Sample_User_Icon.png"))
+    
 @mbp.route("/")
 def index():
+    if current_user.is_authenticated:
+        render_with_pic()
     return render_template("index.html")
 
 
