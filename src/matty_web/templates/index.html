@@ -16,5 +16,10 @@
 
 
   <script src="{{ url_for('static', filename='js/materialize.js') }}"></script>
+  <script>
+    {% for message in get_flashed_messages() %}
+    M.toast({html: "{{ message }}"})
+    {% endfor %}
+  </script>
 </body>
 </html>

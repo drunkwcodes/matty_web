@@ -5,6 +5,7 @@ from datetime import datetime
 from pathlib import Path
 
 import peewee
+from flask_login import UserMixin
 
 from .utils import conf, generate_password, hash_password
 
@@ -17,10 +18,10 @@ class BaseModel(peewee.Model):
         database = db
 
 
-class User(BaseModel):
+class User(BaseModel, UserMixin):
     username = peewee.CharField(max_length=80)
     email = peewee.CharField(max_length=120)
-    password = peewee.CharField(max_length=60)
+    password = peewee.CharField(max_length=60, null=True)
     picture = peewee.CharField(max_length=120, null=True)
     add_at = peewee.TimeField()
 

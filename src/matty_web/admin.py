@@ -6,7 +6,7 @@ from flask import Blueprint, Flask, render_template
 from flask_admin.contrib.peewee import ModelView
 
 from matty_web.models import Post, User, UserInfo, init_db
-from matty_web.utils import conf, init_data
+from matty_web.utils import conf, init_data, login_manager
 from matty_web.views import mbp
 
 
@@ -35,12 +35,15 @@ def main():
     init_data()
 
     app = Flask(__name__)
-    app.config["SECRET_KEY"] = "123456790"
+    app.config["SECRET_KEY"] = "123456790"  # 設置一個密鑰以進行會話加密
 
     # setup logging
     log_file = Path(conf["data_folder"]) / "matty_web.log"
     logging.basicConfig(filename=log_file, filemode="a")
     logging.getLogger().setLevel(logging.DEBUG)
+
+    # setup flask login
+    login_manager.init_app(app)
 
     # setup flask admin
     admin = fadmin.Admin(app, name="Matty WEB Admin")
