@@ -52,6 +52,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "flask-login"
+version = "0.6.2"
+requires_python = ">=3.7"
+summary = "User authentication and session management for Flask."
+dependencies = [
+    "Flask>=1.0.4",
+    "Werkzeug>=1.0.1",
+]
+
+[[package]]
 name = "iniconfig"
 version = "2.0.0"
 requires_python = ">=3.7"
@@ -138,7 +148,7 @@ dependencies = [
 lock_version = "4.2"
 cross_platform = true
 groups = ["default", "dev"]
-content_hash = "sha256:ddf1907136b19e47868a46edb8f6eaaad620b3bb1f7ed618d9bf42c3ec901626"
+content_hash = "sha256:967ce784ab2616e9b1f50751f37787dcbea4bddd9f960a2ee90d5fb394daa482"
 
 [metadata.files]
 "bcrypt 4.0.1" = [
@@ -183,6 +193,10 @@ content_hash = "sha256:ddf1907136b19e47868a46edb8f6eaaad620b3bb1f7ed618d9bf42c3e
 "flask-admin 1.6.1" = [
     {url = "https://files.pythonhosted.org/packages/61/b3/656c78dfef163517dbbc9fd106f0604e37b436ad51f9d9450b60e9407e35/Flask_Admin-1.6.1-py3-none-any.whl", hash = "sha256:fd8190f1ec3355913a22739c46ed3623f1d82b8112cde324c60a6fc9b21c9406"},
     {url = "https://files.pythonhosted.org/packages/be/4d/7cad383a93e3e1dd9378f1fcf05ddc532c6d921fb30c19ce8f8583630f24/Flask-Admin-1.6.1.tar.gz", hash = "sha256:24cae2af832b6a611a01d7dc35f42d266c1d6c75a426b869d8cb241b78233369"},
+]
+"flask-login 0.6.2" = [
+    {url = "https://files.pythonhosted.org/packages/a6/94/01b658bef1863a07f4738a322cce87d97be4362645255dc1182f7f5c075a/Flask_Login-0.6.2-py3-none-any.whl", hash = "sha256:1ef79843f5eddd0f143c2cd994c1b05ac83c0401dc6234c143495af9a939613f"},
+    {url = "https://files.pythonhosted.org/packages/cc/da/eae45ba9ec58af45b46ef94c6ca04fb211ee57c06421b696e894eb11b064/Flask-Login-0.6.2.tar.gz", hash = "sha256:c0a7baa9fdc448cdd3dd6f0939df72eec5177b2f7abe6cb82fc934d29caac9c3"},
 ]
 "iniconfig 2.0.0" = [
     {url = "https://files.pythonhosted.org/packages/d7/4b/cbd8e699e64a6f16ca3a8220661b5f83792b3017d0f79807cb8708d33913/iniconfig-2.0.0.tar.gz", hash = "sha256:2d91e135bf72d31a410b17c16da610a82cb55f6b0477d1a902134b24a455b8b3"},

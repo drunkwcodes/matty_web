@@ -1,37 +1,31 @@
 import logging
-import os
-import tomllib
 from pathlib import Path
 
-import flask_admin as fadmin
 from flask import Flask
 
-from matty_web.models import Post, User, UserInfo
-from matty_web.utils import init_data
-from matty_web.views import my_blueprint
+from matty_web.models import init_db
+from matty_web.utils import conf, init_data
+from matty_web.views import mbp
 
 
 def main():
     init_data()
+
     app = Flask(__name__)
     app.config["SECRET_KEY"] = "123456790"
 
-    logging.basicConfig(filename="matty_web.log", filemode="a")
+    # setup logging
+    log_file = Path(conf["data_folder"]) / "matty_web.log"
+    logging.basicConfig(filename=log_file, filemode="a")
     logging.getLogger().setLevel(logging.DEBUG)
 
-    try:
-        User.create_table()
-        UserInfo.create_table()
-        Post.create_table()
-    except Exception as e:
-        logging.exception(e)
-        print("Create table error. See log for more information.")
-        # pass
+    # setup db
+    init_db()
 
     # views
-    app.register_blueprint(my_blueprint)
+    app.register_blueprint(mbp)
 
-    app.run(debug=True)
+    app.run()
 
 
 if __name__ == "__main__":
