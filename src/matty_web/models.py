@@ -29,6 +29,13 @@ class User(BaseModel, UserMixin):
         return self.username
 
 
+class Profile(BaseModel):
+    user = peewee.ForeignKeyField(User)
+    education = peewee.TextField(null=True)
+    experience = peewee.TextField(null=True)
+    bio = peewee.TextField(null=True)
+
+
 class UserInfo(BaseModel):
     key = peewee.CharField(max_length=64)
     value = peewee.CharField(max_length=64)
@@ -56,10 +63,31 @@ def init_db():
         User.create_table()
         UserInfo.create_table()
         Post.create_table()
+        Profile.create_table()
     except Exception as e:
         logging.exception(e)
         print("Create table error. See log for more information.")
         # pass
+
+    add_user(username="drunkwcodes", email="eric@simutech.com.tw", password="123456")
+    mock_user = User.get_or_none(User.email == "eric@simutech.com.tw")
+    mock_profile = Profile(
+        user=mock_user,
+        education="建國中學",
+        experience="Simutech New Comer",
+        bio="""Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam sagittis urna non sem lacinia
+              efficitur.
+              In hac habitasse platea dictumst. Sed nec libero ut diam bibendum faucibus. Quisque at sollicitudin
+              justo. Curabitur vitae tincidunt massa, sit amet porta mauris. Sed ut congue turpis. Donec non
+              pellentesque odio, id fermentum dolor. Nullam ultrices nunc a urna vulputate, et tempus velit
+              luctus.
+              Morbi pharetra, nisl vitae gravida fermentum, leo tortor bibendum turpis, a tempus tortor nisl eu
+              enim.
+              Quisque commodo, metus eget vestibulum dignissim, sapien nisl convallis mauris, sed aliquam magna
+              sem
+              eget enim.""",
+    )
+    mock_profile.save()
 
 
 def add_user(username="", email="", password=""):
@@ -79,5 +107,8 @@ def add_user(username="", email="", password=""):
         hpw = hash_password(password)
     user = User(username=username, email=email, password=hpw, add_at=datetime.now())
     user.save()
+
+    p = Profile(user=user)
+    p.save()
 
     return user, password

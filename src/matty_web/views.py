@@ -5,7 +5,7 @@ from flask import Blueprint, abort, flash, redirect, render_template, request, u
 from flask_login import current_user, login_user, logout_user
 from peewee import DoesNotExist
 
-from .models import User, UserInfo
+from .models import User, UserInfo, Profile
 from .utils import conf, hash_password, login_manager, verify_password
 
 mbp = Blueprint("mbp", __name__)  # main bp
@@ -58,6 +58,7 @@ def login():
                 login_user(user)
                 flash("Need to reset password.")
                 return redirect(next or url_for("mbp.reset_password"))
+
             elif verify_password(password=password, hashed_password=user.password):
                 login_user(user)
                 flash("Logged in successfully.")
@@ -70,6 +71,41 @@ def login():
             flash("Email incorrect.")
             return redirect(url_for("mbp.login"))  # TODO: 或是顯示錯誤訊息
 
+
+@mbp.route("/profile")
+def profile():
+    if not current_user.is_authenticated:
+        abort(401)
+    pf = Profile.get_or_none(Profile.user == current_user)
+    return render_template("profile.html", pic=pic_url(), profile=pf)
+
+
+@mbp.route("/edit_profile", methods=["GET", "POST"])
+def edit_profile():
+    if not current_user.is_authenticated:
+        abort(401)
+    
+    if request.method == "GET":
+        pf = Profile.get(Profile.user == current_user)
+        return render_template("edit_profile.html", pic=pic_url(), profile=pf)
+    
+    elif request.method == "POST":
+        username = request.form.get("username")
+        education = request.form.get("education")
+        experience = request.form.get("experience")
+        bio = request.form.get("bio")
+
+        current_user.username = username
+        current_user.save()
+
+        pf = Profile.get(Profile.user == current_user)
+        pf.education = education
+        pf.experience = experience
+        pf.bio = bio
+        pf.save()
+
+        flash("Edit Successful!")
+        return redirect(url_for("mbp.profile"))
 
 @mbp.route("/settings")
 def settings():

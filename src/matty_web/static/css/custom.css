@@ -3,8 +3,8 @@
   }
 
 .avatar-img-small {
-  width: 30px; /* 调整图像的宽度 */
-  height: 30px; /* 调整图像的高度 */
+  width: 40px; /* 调整图像的宽度 */
+  height: 40px; /* 调整图像的高度 */
   margin-top: 10px; /* 调整图像的上边距 */
   margin-right: 10px; /* 调整图像的右边距 */
 }

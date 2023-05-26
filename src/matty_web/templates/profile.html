@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- 引入Materialize CSS的样式表 -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/materialize.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
+
+  <!-- 可选：如果需要使用Material Icons图标字体，请引入下面这行 -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <title>Profile</title>
+</head>
+
+<body>
+  {% include 'navbar.html' %}
+  <div class="container">
+    <div class="row">
+      <div class="col s12 m8 offset-m2">
+        <div class="card">
+          <div class="card-content">
+            <span class="card-title">Profile</span>
+            <div>
+              <h6>Username: {{ profile.user.username }}</h6>
+              <h6>Education: {{ profile.education }}</h6>
+              <h6>Experience: {{ profile.experience }}</h6>
+            </div>
+          </div>
+          <div class="card-action">
+            <a href="/edit_profile">
+              <button class="btn waves-effect waves-light right" >Edit</button>
+            </a>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-content">
+            <span class="card-title">自傳</span>
+            <p>{{ profile.bio }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 引入Materialize JavaScript文件 -->
+  <script src="{{ url_for('static', filename='js/materialize.js') }}"></script>
+  <script>
+    {% for message in get_flashed_messages() %}
+    M.toast({html: "{{ message }}"})
+    {% endfor %}
+  </script>
+</body>
+
+</html>
