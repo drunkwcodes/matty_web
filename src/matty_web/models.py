@@ -33,6 +33,7 @@ class Profile(BaseModel):
     education = peewee.TextField(null=True)
     experience = peewee.TextField(null=True)
     bio = peewee.TextField(null=True)
+    is_public = peewee.BooleanField(default=True)
 
 
 class UserInfo(BaseModel):

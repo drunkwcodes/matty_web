@@ -20,7 +20,7 @@ fbp = Blueprint(
 
 
 def pic_url():
-    if current_user.picture:
+    if current_user.is_authenticated and current_user.picture:
         return url_for("fbp.static", filename=f"profile_pic/{current_user.picture}")
     else:
         return url_for("static", filename="Sample_User_Icon.png")
@@ -50,20 +50,21 @@ def login():
     elif request.method == "POST":
         email = request.form.get("email")  # form 用 name="email" 才抓得到
         password = request.form.get("password")
-        next = request.args.get("next")  # TODO
+        next_url = request.args.get("next")  # TODO
+        print(next_url)
         user = User.get_or_none(User.email == email)
 
         if user:
             if not user.password:
                 login_user(user)
                 flash("Need to reset password.")
-                return redirect(next or url_for("mbp.reset_password"))
+                return redirect(next_url or url_for("mbp.reset_password"))
 
             elif verify_password(password=password, hashed_password=user.password):
                 login_user(user)
                 flash("Logged in successfully.")
 
-                return redirect(next or url_for("mbp.index"))
+                return redirect(next_url or url_for("mbp.index"))
             else:
                 flash("Wrong password.")
                 return redirect(url_for("mbp.login"))
@@ -73,11 +74,24 @@ def login():
 
 
 @mbp.route("/profile")
-def profile():
+def profile_self():
     if not current_user.is_authenticated:
-        abort(401)
-    pf = Profile.get_or_none(Profile.user == current_user)
-    return render_template("profile.html", pic=pic_url(), profile=pf)
+        return redirect(url_for("mbp.login", next="/profile"))
+    return redirect(f"/profile/{current_user.id}")
+
+
+@mbp.route("/profile/<int:user_id>")
+def profile(user_id):
+    try:
+        user = User.get_by_id(user_id)
+    except DoesNotExist:
+        abort(404)
+
+    pf = Profile.get(Profile.user == user)
+    if pf.is_public or current_user == user:
+        return render_template("profile.html", pic=pic_url(), profile=pf)
+    else:
+        abort(404)  # TODO: custom 404
 
 
 @mbp.route("/edit_profile", methods=["GET", "POST"])

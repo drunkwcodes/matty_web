@@ -26,11 +26,13 @@
               <h6>Experience: {{ profile.experience }}</h6>
             </div>
           </div>
+          {% if current_user == profile.user %}
           <div class="card-action">
             <a href="/edit_profile">
               <button class="btn waves-effect waves-light right" >Edit</button>
             </a>
           </div>
+          {% endif %}
         </div>
         <div class="card">
           <div class="card-content">
