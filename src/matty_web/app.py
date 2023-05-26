@@ -3,7 +3,7 @@ from pathlib import Path
 
 from flask import Flask
 
-from matty_web.models import init_db, db_path
+from matty_web.models import db_path, init_db
 from matty_web.utils import conf, init_data, login_manager
 from matty_web.views import mbp
 

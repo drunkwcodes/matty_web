@@ -6,7 +6,7 @@ from flask import Blueprint, Flask, render_template, url_for
 from flask_admin.contrib.peewee import ModelView
 from flask_login import current_user
 
-from matty_web.models import Post, User, UserInfo, init_db, db_path
+from matty_web.models import Post, User, UserInfo, db_path, init_db
 from matty_web.utils import conf, init_data, login_manager
 from matty_web.views import mbp
 

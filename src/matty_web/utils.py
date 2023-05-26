@@ -53,6 +53,11 @@ def hash_password(password):
 
 def verify_password(password, hashed_password):
     # Check if the provided password matches the hashed password
+    if password is None:
+        password = ""
+    if hashed_password is None:
+        hashed_password = ""
+
     if type(password) is not bytes:
         password = password.encode("utf-8")
 
