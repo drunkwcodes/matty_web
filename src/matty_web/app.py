@@ -3,7 +3,7 @@ from pathlib import Path
 
 from flask import Flask
 
-from matty_web.models import init_db
+from matty_web.models import init_db, db_path
 from matty_web.utils import conf, init_data, login_manager
 from matty_web.views import mbp
 
@@ -23,7 +23,8 @@ def main():
     login_manager.init_app(app)
 
     # setup db
-    init_db()
+    if not Path(db_path).exists():
+        init_db()
 
     # views
     app.register_blueprint(mbp)

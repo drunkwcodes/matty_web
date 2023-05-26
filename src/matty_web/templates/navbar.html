@@ -3,14 +3,26 @@
         <a href="/" class="brand-logo">Matty WEB</a>
         <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
         <ul id="nav-mobile" class="right">
-            {% if current_user.is_authenticated %}
-            <li><img src="{{ pic }}" alt="User Avatar" class="circle avatar-img" /></li>
-            {% else %}
-            <li><a class="waves-effect waves-light btn" href="/login">Login<i class="material-icons right">person</i></a></li>
-            {% endif %}
             {% if admin_mode %}
             <li><a href="/admin/">Admin</a></li>
             {% endif %}
+            {% if current_user.is_authenticated %}
+            <li>
+                <a class="dropdown-trigger" href="#" data-target="user-dropdown">
+                    <li><img src="{{ pic }}" alt="User Avatar" class="circle avatar-img-small" /></li>
+                </a>
+            </li>
+            <ul id="user-dropdown" class="dropdown-content">
+                <!-- 下拉菜单选项 -->
+                <li><a href="/profile">Profile</a></li>
+                <li><a href="/settings">Settings</a></li>
+                <li class="divider"></li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+            {% else %}
+            <li><a class="waves-effect waves-light btn" href="/login">Login<i class="material-icons right">person</i></a></li>
+            {% endif %}
+            
             
         </ul>
     </div>
@@ -29,7 +41,17 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    //sidenav
     var elems = document.querySelectorAll('.sidenav');
     var instances = M.Sidenav.init(elems);
+
+    //dropdown trigger
+    var dropdowns = document.querySelectorAll('.dropdown-trigger');
+    var dropdownOptions = {
+        // constrainWidth: false, // 不限制下拉菜单的宽度
+        coverTrigger: false
+        // 可选：设置其他选项
+    };
+    M.Dropdown.init(dropdowns, dropdownOptions);
 });
 </script>

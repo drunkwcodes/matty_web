@@ -2,10 +2,11 @@ import logging
 from pathlib import Path
 
 import flask_admin as fadmin
-from flask import Blueprint, Flask, render_template
+from flask import Blueprint, Flask, render_template, url_for
 from flask_admin.contrib.peewee import ModelView
+from flask_login import current_user
 
-from matty_web.models import Post, User, UserInfo, init_db
+from matty_web.models import Post, User, UserInfo, init_db, db_path
 from matty_web.utils import conf, init_data, login_manager
 from matty_web.views import mbp
 
@@ -52,13 +53,29 @@ def main():
     admin.add_view(PostAdmin(Post))
 
     # setup db
-    init_db()
+    if not Path(db_path).exists():
+        init_db()
 
     # views
     adminbp = Blueprint("adminbp", __name__)
 
     @adminbp.route("/")
     def index():
+        if current_user.is_authenticated:
+            if current_user.picture:  # TODO: test pic
+                return render_template(
+                    "index.html",
+                    pic=url_for(
+                        "fbp.static", filename=f"profile_pic/{current_user.picture}"
+                    ),
+                    admin_mode=True,
+                )
+            else:
+                return render_template(
+                    "index.html",
+                    pic=url_for("static", filename="Sample_User_Icon.png"),
+                    admin_mode=True,
+                )
         return render_template("index.html", admin_mode=True)
 
     app.register_blueprint(

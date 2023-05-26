@@ -1,27 +1,39 @@
-from flask import Blueprint, flash, redirect, render_template, request, url_for
-from flask_login import login_user
-from peewee import DoesNotExist
+import logging
 from pathlib import Path
 
+from flask import Blueprint, flash, redirect, render_template, request, url_for
+from flask_login import current_user, login_user, logout_user
+from peewee import DoesNotExist
+
 from .models import User, UserInfo
-from .utils import login_manager, verify_password, conf
-from flask_login import current_user
+from .utils import conf, login_manager, verify_password
 
 mbp = Blueprint("mbp", __name__)  # main bp
 
 # files bp
-fbp = Blueprint('fbp', __name__, static_folder=Path(conf["data_folder"]) / "server_files", static_url_path='/files')
+fbp = Blueprint(
+    "fbp",
+    __name__,
+    static_folder=Path(conf["data_folder"]) / "server_files",
+    static_url_path="/files",
+)
 
-def render_with_pic(template_name="index.html"):
-    if current_user.picture:  # TODO: test pic
-        return render_template(template_name, pic=url_for("fbp.static", f"profile_pic/{current_user.picture}"))
-    else:
-        return render_template(template_name, pic=url_for("static", "Sample_User_Icon.png"))
-    
+
 @mbp.route("/")
 def index():
+    logging.debug("test index")
     if current_user.is_authenticated:
-        render_with_pic()
+        if current_user.picture:  # TODO: test pic
+            return render_template(
+                "index.html",
+                pic=url_for(
+                    "fbp.static", filename=f"profile_pic/{current_user.picture}"
+                ),
+            )
+        else:
+            return render_template(
+                "index.html", pic=url_for("static", filename="Sample_User_Icon.png")
+            )
     return render_template("index.html")
 
 
@@ -60,3 +72,9 @@ def login():
         else:
             flash("Email incorrect.")
             return redirect(url_for("mbp.login"))  # TODO: 或是顯示錯誤訊息
+
+
+@mbp.route("/logout")
+def logout():
+    logout_user()
+    return redirect(url_for("mbp.index"))

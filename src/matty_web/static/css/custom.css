@@ -1,3 +1,11 @@
 .nav-wrapper {
     background-color: #c300ff; /* 使用十六進位碼來設定為紅色 */
   }
+
+.avatar-img-small {
+  width: 30px; /* 调整图像的宽度 */
+  height: 30px; /* 调整图像的高度 */
+  margin-top: 10px; /* 调整图像的上边距 */
+  margin-right: 10px; /* 调整图像的右边距 */
+}
+
