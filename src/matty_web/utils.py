@@ -1,15 +1,24 @@
 import os
 import random
 import string
-import tomllib
+
+try:
+    import tomllib
+except ImportError:
+    import toml
+
 from pathlib import Path
 
 import bcrypt
 from flask_login import LoginManager
 
 conf_file = Path(__file__).with_name("conf.toml")
-with open(conf_file, "rb") as f:
-    conf = tomllib.load(f)
+try:
+    with open(conf_file, "rb") as f:
+        conf = tomllib.load(f)
+except NameError:
+    with open(conf_file, "r") as f:
+        conf = toml.load(f)
 
 login_manager = LoginManager()
 

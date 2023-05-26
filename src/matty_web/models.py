@@ -1,5 +1,4 @@
 import logging
-import tomllib
 import uuid
 from datetime import datetime
 from pathlib import Path
@@ -71,11 +70,10 @@ def init_db():
 
     add_user(username="drunkwcodes", email="eric@simutech.com.tw", password="123456")
     mock_user = User.get_or_none(User.email == "eric@simutech.com.tw")
-    mock_profile = Profile(
-        user=mock_user,
-        education="建國中學",
-        experience="Simutech New Comer",
-        bio="""Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam sagittis urna non sem lacinia
+    mock_profile = Profile.get(Profile.user == mock_user)
+    mock_profile.education = "建國中學"
+    mock_profile.experience = "Simutech New Comer"
+    mock_profile.bio = """Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam sagittis urna non sem lacinia
               efficitur.
               In hac habitasse platea dictumst. Sed nec libero ut diam bibendum faucibus. Quisque at sollicitudin
               justo. Curabitur vitae tincidunt massa, sit amet porta mauris. Sed ut congue turpis. Donec non
@@ -85,8 +83,7 @@ def init_db():
               enim.
               Quisque commodo, metus eget vestibulum dignissim, sapien nisl convallis mauris, sed aliquam magna
               sem
-              eget enim.""",
-    )
+              eget enim."""
     mock_profile.save()
 
 

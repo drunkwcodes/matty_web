@@ -5,7 +5,7 @@ from flask import Blueprint, abort, flash, redirect, render_template, request, u
 from flask_login import current_user, login_user, logout_user
 from peewee import DoesNotExist
 
-from .models import User, UserInfo, Profile
+from .models import Profile, User, UserInfo
 from .utils import conf, hash_password, login_manager, verify_password
 
 mbp = Blueprint("mbp", __name__)  # main bp
@@ -84,11 +84,11 @@ def profile():
 def edit_profile():
     if not current_user.is_authenticated:
         abort(401)
-    
+
     if request.method == "GET":
         pf = Profile.get(Profile.user == current_user)
         return render_template("edit_profile.html", pic=pic_url(), profile=pf)
-    
+
     elif request.method == "POST":
         username = request.form.get("username")
         education = request.form.get("education")
@@ -106,6 +106,7 @@ def edit_profile():
 
         flash("Edit Successful!")
         return redirect(url_for("mbp.profile"))
+
 
 @mbp.route("/settings")
 def settings():
