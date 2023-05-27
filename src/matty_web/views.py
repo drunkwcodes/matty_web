@@ -119,7 +119,7 @@ def edit_profile():
         pf.save()
 
         flash("Edit Successful!")
-        return redirect(url_for("mbp.profile"))
+        return redirect(url_for("mbp.profile", user_id=current_user.id))
 
 
 @mbp.route("/settings")
