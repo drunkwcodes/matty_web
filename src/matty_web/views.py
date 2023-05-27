@@ -3,7 +3,7 @@ from pathlib import Path
 
 from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_user, logout_user
-from peewee import DoesNotExist
+from peewee import DoesNotExist, IntegrityError
 
 from .models import Profile, User, UserInfo
 from .utils import conf, hash_password, login_manager, verify_password
@@ -28,7 +28,6 @@ def pic_url():
 
 @mbp.route("/")
 def index():
-    logging.debug("test index")
     if current_user.is_authenticated:
         return render_template("index.html", pic=pic_url())
     return render_template("index.html")
@@ -67,7 +66,7 @@ def login():
                 return redirect(next_url or url_for("mbp.index"))
             else:
                 flash("Wrong password.")
-                return redirect(url_for("mbp.login"))
+                return redirect(url_for("mbp.login", next=next_url))
         else:
             flash("Email incorrect.")
             return redirect(url_for("mbp.login"))  # TODO: 或是顯示錯誤訊息
@@ -110,7 +109,10 @@ def edit_profile():
         bio = request.form.get("bio")
 
         current_user.username = username
-        current_user.save()
+        try:
+            current_user.save()
+        except IntegrityError:
+            flash("New username conflicts with existing account.")
 
         pf = Profile.get(Profile.user == current_user)
         pf.education = education

@@ -5,7 +5,7 @@ from flask import Flask
 
 from matty_web.models import db_path, init_db
 from matty_web.utils import conf, init_data, login_manager
-from matty_web.views import mbp
+from matty_web.views import fbp, mbp
 
 
 def main():
@@ -28,6 +28,7 @@ def main():
 
     # views
     app.register_blueprint(mbp)
+    app.register_blueprint(fbp)
 
     app.run()
 

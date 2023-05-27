@@ -9,3 +9,43 @@
   margin-right: 10px; /* 调整图像的右边距 */
 }
 
+
+.circle {
+  position: relative;
+  /* 其他樣式... */
+}
+
+
+.p-image {
+  position: absolute;
+  top: 0;
+  right: 0;
+  /* 其他樣式... */
+}
+
+.profile-pic,
+.p-image {
+  position: relative;
+  width: 100px; /* 调整图像的宽度 */
+  height: 100px; /* 调整图像的高度 */
+  display: inline-block;
+}
+
+
+.content-wrapper {
+  display: flex;
+  align-items: flex-start;
+}
+
+.profile-pic-upload {
+    display: none;
+}
+
+.upload-button {
+  font-size: 1.2em;
+}
+
+.upload-button:hover {
+  transition: all .3s cubic-bezier(.175, .885, .32, 1.275);
+  color: #999;
+}

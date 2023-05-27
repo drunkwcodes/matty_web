@@ -8,7 +8,7 @@ from flask_login import current_user
 
 from matty_web.models import Post, User, UserInfo, db_path, init_db
 from matty_web.utils import conf, init_data, login_manager
-from matty_web.views import mbp
+from matty_web.views import fbp, mbp, pic_url
 
 
 class UserAdmin(ModelView):
@@ -62,26 +62,15 @@ def main():
     @adminbp.route("/")
     def index():
         if current_user.is_authenticated:
-            if current_user.picture:  # TODO: test pic
-                return render_template(
-                    "index.html",
-                    pic=url_for(
-                        "fbp.static", filename=f"profile_pic/{current_user.picture}"
-                    ),
-                    admin_mode=True,
-                )
-            else:
-                return render_template(
-                    "index.html",
-                    pic=url_for("static", filename="Sample_User_Icon.png"),
-                    admin_mode=True,
-                )
+            pic = pic_url()
+            return render_template("index.html", pic=pic, admin_mode=True)
         return render_template("index.html", admin_mode=True)
 
     app.register_blueprint(
         adminbp
     )  # the router will route to the first registered view.
     app.register_blueprint(mbp)
+    app.register_blueprint(fbp)
 
     app.run(debug=True)
 
