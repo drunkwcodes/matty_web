@@ -20,7 +20,7 @@
         <div class="card-content">
           <span class="card-title">登入</span>
           <div class="row">
-            <form class="col s12" action="{{ url_for('mbp.login') }}" method="POST">
+            <form class="col s12" action="{{ url_for('mbp.login', next=next_url) }}" method="POST">
               <div class="row">
                 <div class="input-field col s12">
                   <input id="email" name="email" type="email" class="validate">

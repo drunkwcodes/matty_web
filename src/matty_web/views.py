@@ -45,13 +45,13 @@ def load_user(user_id):
 @mbp.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
-        return render_template("login.html")
+        next_url = request.args.get("next")
+        return render_template("login.html", next_url=next_url)
 
     elif request.method == "POST":
         email = request.form.get("email")  # form 用 name="email" 才抓得到
         password = request.form.get("password")
-        next_url = request.args.get("next")  # TODO
-        print(next_url)
+        next_url = request.args.get("next")
         user = User.get_or_none(User.email == email)
 
         if user:
