@@ -1,9 +1,19 @@
 import logging
 from pathlib import Path
 
-from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
+from flask import (
+    Blueprint,
+    abort,
+    flash,
+    redirect,
+    render_template,
+    request,
+    send_from_directory,
+    url_for,
+)
 from flask_login import current_user, login_user, logout_user
 from peewee import DoesNotExist, IntegrityError
+from werkzeug.utils import secure_filename
 
 from .models import Profile, User, UserInfo
 from .utils import conf, hash_password, login_manager, verify_password
@@ -91,6 +101,61 @@ def profile(user_id):
         return render_template("profile.html", pic=pic_url(), profile=pf)
     else:
         abort(404)  # TODO: custom 404
+
+
+@fbp.route("/profile_pic", methods=["POST"])
+def profile_pic_upload():
+    if not current_user.is_authenticated:
+        abort(401)
+
+    if "file" not in request.files:
+        abort(400, "No file provided.")
+
+    file = request.files["file"]
+    if file.filename == "":
+        abort(400, "Empty filename.")
+
+    if file:
+        # 使用 secure_filename 函式來避免潛在的安全問題
+        filename = secure_filename(file.filename)
+        username = current_user.username
+        filename_suffix = Path(filename).suffix  # 取得檔案副檔名
+
+        # 儲存檔案到指定的目錄中
+        file.save(
+            Path(conf["data_folder"])
+            / "server_files"
+            / "profile_pic"
+            / f"{username}{filename_suffix}"
+        )
+
+        current_user.picture = f"{username}{filename_suffix}"
+        current_user.save()
+
+        return {"message": "Profile picture saved successfully."}
+    else:
+        abort(400, "Invalid file.")
+
+
+@fbp.route("/profile_pic", methods=["GET"], defaults={"user_id": None})
+@fbp.route("/profile_pic/<int:user_id>", methods=["GET"])
+def get_profile_pic(user_id):
+    if user_id is None:
+        if not current_user.is_authenticated:
+            abort(401)
+        user = current_user
+    else:
+        try:
+            user = User.get_by_id(user_id)
+        except DoesNotExist:
+            abort(404, "User not found.")
+
+    pic_path = Path(conf["data_folder"]) / "server_files" / "profile_pic" / user.picture
+
+    if pic_path.exists():
+        return send_from_directory(str(pic_path.parent), pic_path.name)
+    else:
+        abort(404, "Profile picture not found.")
 
 
 @mbp.route("/edit_profile", methods=["GET", "POST"])

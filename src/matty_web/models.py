@@ -5,6 +5,7 @@ from pathlib import Path
 
 import peewee
 from flask_login import UserMixin
+from werkzeug.utils import secure_filename
 
 from matty_web.utils import conf, generate_password, hash_password
 
@@ -100,6 +101,8 @@ def add_user(username="", email="", password=""):
         password = generate_password()
     hpw = hash_password(password)
 
+    # Secure username for profile pic
+    assert secure_filename(username) == username
     user = User(username=username, email=email, password=hpw)
     try:
         user.save()
