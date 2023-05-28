@@ -26,6 +26,7 @@ fbp = Blueprint(
     __name__,
     static_folder=Path(conf["data_folder"]) / "server_files",
     static_url_path="/files",
+    url_prefix="/files",
 )
 
 
