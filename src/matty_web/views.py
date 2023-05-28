@@ -148,12 +148,14 @@ def get_profile_pic(user_id):
         try:
             user = User.get_by_id(user_id)
         except DoesNotExist:
-            abort(404, "User not found.")
+            abort(404, description="User not found.")
 
-    pic_path = Path(conf["data_folder"]) / "server_files" / "profile_pic" / user.picture
-
-    if pic_path.exists():
-        return send_from_directory(str(pic_path.parent), pic_path.name)
+    if user.picture:
+        pic_path = (
+            Path(conf["data_folder"]) / "server_files" / "profile_pic" / user.picture
+        )
+        if pic_path.is_file():
+            return send_from_directory(str(pic_path.parent), pic_path.name)
     else:
         abort(404, "Profile picture not found.")
 
@@ -192,7 +194,7 @@ def edit_profile():
 @mbp.route("/settings")
 def settings():
     if not current_user.is_authenticated:
-        abort(401)
+        abort(401, description="Need to login to view settings.")
     return render_template("settings.html", pic=pic_url())
 
 
