@@ -6,6 +6,7 @@ from matty_web.utils import (
     generate_password,
     hash_password,
     init_data,
+    is_email,
     verify_password,
 )
 
@@ -29,3 +30,8 @@ def test_verify_password():
     pw = generate_password()
     hpw = hash_password(pw)
     assert verify_password(pw, hpw)
+
+
+def test_is_email():
+    assert is_email("strange@email.com") is True
+    assert is_email("str.ange@email.com") is True

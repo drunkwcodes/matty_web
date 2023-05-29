@@ -8,7 +8,7 @@ from flask_login import current_user
 
 from matty_web.models import Post, User, UserInfo, db_path, init_db
 from matty_web.utils import conf, init_data, login_manager
-from matty_web.views import fbp, mbp, pic_url
+from matty_web.views import avatar_url, fbp, mbp
 
 
 class UserAdmin(ModelView):
@@ -62,8 +62,8 @@ def main():
     @adminbp.route("/")
     def index():
         if current_user.is_authenticated:
-            pic = pic_url()
-            return render_template("index.html", pic=pic, admin_mode=True)
+            avatar = avatar_url()
+            return render_template("index.html", avatar=avatar, admin_mode=True)
         return render_template("index.html", admin_mode=True)
 
     app.register_blueprint(

@@ -1,4 +1,5 @@
 import logging
+import os
 import uuid
 from datetime import datetime
 from pathlib import Path
@@ -7,7 +8,14 @@ import peewee
 from flask_login import UserMixin
 from werkzeug.utils import secure_filename
 
-from matty_web.utils import conf, generate_password, hash_password
+from matty_web.utils import (
+    PIC_PATH,
+    InvalidInputError,
+    conf,
+    generate_password,
+    hash_password,
+    is_email,
+)
 
 db_path = Path(conf["data_folder"]) / "test.sqlite"
 db = peewee.SqliteDatabase(db_path, check_same_thread=False)
@@ -29,6 +37,21 @@ class User(BaseModel, UserMixin):
 
     def __str__(self):
         return self.username
+
+    def change_username(self, new_name):
+        if not is_valid_username(new_name):
+            raise InvalidInputError(f"Invalid username: {new_name}")
+        self.username = new_name
+
+        # change profile avatar filename and user.picture
+        if self.picture:
+            old_path = PIC_PATH / self.picture
+            new_path = PIC_PATH / f"{self.username}{old_path.suffix}"
+            os.rename(old_path, new_path)
+
+            self.picture = f"{self.username}{old_path.suffix}"
+
+        self.save()
 
 
 class Profile(BaseModel):
@@ -74,7 +97,13 @@ def init_db():
         print("Create table error. See log for more information.")
         # pass
 
-    add_user(username="drunkwcodes", email="eric@simutech.com.tw", password="123456")
+    try:
+        add_user(
+            email="eric@simutech.com.tw", username="drunkwcodes", password="123456"
+        )
+    except InvalidInputError:
+        pass
+
     mock_user = User.get_or_none(User.email == "eric@simutech.com.tw")
     mock_profile = Profile.get(Profile.user == mock_user)
     mock_profile.education = "建國中學"
@@ -89,27 +118,58 @@ def init_db():
     mock_profile.save()
 
 
-def add_user(username="", email="", password=""):
-    """新增使用者，成功 return User(), password, 失敗 return None."""
+def add_user(email="", username="", password=""):
+    """新增使用者，成功 return (User(), password), 失敗 raise InvalidInputError.
 
-    if not username:
-        raise Exception("username can not be empty.")
+    Required field: email
+    """
+
     if not email:
-        raise Exception("email can not be empty.")
+        raise InvalidInputError("email can not be empty.")
+    if not is_email(email):
+        raise InvalidInputError("Wrong email format.")
+
+    # Secure username for profile pic
+    if username and secure_filename(username) != username:
+        raise InvalidInputError("Malformed username. Should be secure_filename().")
 
     if not password:
         password = generate_password()
     hpw = hash_password(password)
 
-    # Secure username for profile pic
-    assert secure_filename(username) == username
+    # https://stackoverflow.com/questions/49395393/return-max-value-in-a-column-with-peewee
+    max_user_id = User.select(peewee.fn.MAX(User.id)).scalar()
+    if not username:
+        username = f"user{max_user_id + 1}"
     user = User(username=username, email=email, password=hpw)
     try:
         user.save()
     except peewee.IntegrityError:
-        return
+        raise InvalidInputError(
+            f"Used email or username. email: {email}, username: {username}"
+        )
 
     p = Profile(user=user)
     p.save()
 
     return user, password
+
+
+def is_valid_username(new_name):
+    if not new_name:
+        return False
+    if secure_filename(new_name) != new_name:
+        return False
+    if User.get_or_none(User.username == new_name):
+        return False
+    return True
+
+
+def is_valid_email(new_email):
+    if not new_email:
+        return False
+    if not is_email(new_email):
+        return False
+    if User.get_or_none(User.email == new_email):
+        return False
+    return True

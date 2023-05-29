@@ -1,11 +1,14 @@
+"""一些基本的函數，不牽涉到其他模組的東西。盡量不要 import other project's module to avoid circular imports."""
+
 import os
 import random
+import re
 import string
 
 try:
     import tomllib
 except ImportError:
-    import toml
+    import tomlkit
 
 from pathlib import Path
 
@@ -18,30 +21,41 @@ try:
         conf = tomllib.load(f)
 except NameError:
     with open(conf_file, "r") as f:
-        conf = toml.load(f)
+        conf = tomlkit.load(f)
 
 login_manager = LoginManager()
 
 
-def init_data():
-    dpath = conf["data_folder"]
-    if not os.path.exists(Path(dpath)):
-        os.mkdir(dpath)
+class InvalidInputError(Exception):
+    pass
 
-    # mkdir mbp static
-    sfiles = Path(dpath) / "server_files"
-    if not os.path.exists(sfiles):
-        os.mkdir(sfiles)
+
+DPATH = conf["data_folder"]
+SERVER_FILES_PATH = Path(DPATH) / "server_files"
+PIC_PATH = Path(DPATH) / "server_files" / "profile_pic"
+MATERIAL_PATH = Path(DPATH) / "server_files" / "materials"
+PUBLIC_PATH = Path(DPATH) / "server_files" / "public"
+
+
+def init_data():
+    if not os.path.exists(Path(DPATH)):
+        os.mkdir(DPATH)
+
+    # mkdir fbp
+    if not os.path.exists(SERVER_FILES_PATH):
+        os.mkdir(SERVER_FILES_PATH)
 
     # mkdir profile picture
-    pp = Path(dpath) / "server_files" / "profile_pic"
-    if not os.path.exists(pp):
-        os.mkdir(pp)
+    if not os.path.exists(PIC_PATH):
+        os.mkdir(PIC_PATH)
 
     # mkdir material files
-    mf = Path(dpath) / "server_files" / "materials"
-    if not os.path.exists(mf):
-        os.mkdir(mf)
+    if not os.path.exists(MATERIAL_PATH):
+        os.mkdir(MATERIAL_PATH)
+
+    # public server files
+    if not PUBLIC_PATH.exists():
+        os.mkdir(PUBLIC_PATH)
 
 
 def generate_password(length=5):
@@ -74,3 +88,8 @@ def verify_password(password, hashed_password):
         hashed_password = hashed_password.encode("utf-8")
 
     return bcrypt.checkpw(password, hashed_password)
+
+
+def is_email(email):
+    pattern = r"^[\w\.-]+@[\w\.-]+\.\w+$"  # 正則表達式模式
+    return re.match(pattern, email) is not None

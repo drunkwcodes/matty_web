@@ -24,23 +24,27 @@ mbp = Blueprint("mbp", __name__)  # main bp
 fbp = Blueprint(
     "fbp",
     __name__,
-    static_folder=Path(conf["data_folder"]) / "server_files",
-    static_url_path="/files",
+    static_folder=Path(conf["data_folder"]) / "server_files" / "public",
+    static_url_path="/public",
     url_prefix="/files",
 )
 
 
-def pic_url():
+def avatar_url():
     if current_user.is_authenticated and current_user.picture:
-        return url_for("fbp.static", filename=f"profile_pic/{current_user.picture}")
+        return url_for("fbp.get_profile_pic")
     else:
         return url_for("static", filename="Sample_User_Icon.png")
+
+
+def profile_pic_url(user_id):
+    return url_for("fbp.get_profile_pic", user_id=user_id)
 
 
 @mbp.route("/")
 def index():
     if current_user.is_authenticated:
-        return render_template("index.html", pic=pic_url())
+        return render_template("index.html", avatar=avatar_url())
     return render_template("index.html")
 
 
@@ -99,7 +103,12 @@ def profile(user_id):
 
     pf = Profile.get(Profile.user == user)
     if pf.is_public or current_user == user:
-        return render_template("profile.html", pic=pic_url(), profile=pf)
+        return render_template(
+            "profile.html",
+            profile_pic_url=profile_pic_url(user_id),
+            avatar=avatar_url(),
+            profile=pf,
+        )
     else:
         abort(404)  # TODO: custom 404
 
@@ -152,11 +161,11 @@ def get_profile_pic(user_id):
             abort(404, description="User not found.")
 
     if user.picture:
-        pic_path = (
+        PIC_PATH = (
             Path(conf["data_folder"]) / "server_files" / "profile_pic" / user.picture
         )
-        if pic_path.is_file():
-            return send_from_directory(str(pic_path.parent), pic_path.name)
+        if PIC_PATH.is_file():
+            return send_from_directory(str(PIC_PATH.parent), PIC_PATH.name)
     else:
         abort(404, "Profile picture not found.")
 
@@ -168,7 +177,7 @@ def edit_profile():
 
     if request.method == "GET":
         pf = Profile.get(Profile.user == current_user)
-        return render_template("edit_profile.html", pic=pic_url(), profile=pf)
+        return render_template("edit_profile.html", avatar=avatar_url(), profile=pf)
 
     elif request.method == "POST":
         username = request.form.get("username")
@@ -196,7 +205,7 @@ def edit_profile():
 def settings():
     if not current_user.is_authenticated:
         abort(401, description="Need to login to view settings.")
-    return render_template("settings.html", pic=pic_url())
+    return render_template("settings.html", avatar=avatar_url())
 
 
 @mbp.route("/reset_password", methods=["GET", "POST"])
@@ -205,13 +214,16 @@ def reset_password():
         abort(401)
 
     if request.method == "GET":
-        return render_template("reset_password.html", pic=pic_url())
+        return render_template("reset_password.html", avatar=avatar_url())
 
     elif request.method == "POST":
         new_password = request.form.get("new-password")
         confirm_password = request.form.get("confirm-password")
 
-        assert new_password == confirm_password
+        try:
+            assert new_password == confirm_password
+        except AssertionError:
+            abort(403, "New password is not equal to confirm password.")
 
         current_user.password = hash_password(new_password)
         current_user.save()
