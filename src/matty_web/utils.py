@@ -30,11 +30,11 @@ class InvalidInputError(Exception):
     pass
 
 
-DPATH = conf["data_folder"]
-SERVER_FILES_PATH = Path(DPATH) / "server_files"
-PIC_PATH = Path(DPATH) / "server_files" / "profile_pic"
-MATERIAL_PATH = Path(DPATH) / "server_files" / "materials"
-PUBLIC_PATH = Path(DPATH) / "server_files" / "public"
+DPATH = Path(conf["data_folder"])
+SERVER_FILES_PATH = DPATH / "server_files"
+PIC_PATH = DPATH / "server_files" / "profile_pic"
+MATERIAL_PATH = DPATH / "server_files" / "materials"
+PUBLIC_PATH = DPATH / "server_files" / "public"
 
 
 def init_data():
