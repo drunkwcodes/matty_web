@@ -110,7 +110,7 @@ def profile(user_id):
             profile=pf,
         )
     else:
-        abort(404)  # TODO: custom 404
+        abort(404, "User's profile is private.")
 
 
 @fbp.route("/profile_pic", methods=["POST"])
