@@ -39,7 +39,7 @@ PUBLIC_PATH = DPATH / "server_files" / "public"
 
 def init_data():
     if not os.path.exists(Path(DPATH)):
-        os.mkdir(DPATH)
+        os.makedirs(DPATH)
 
     # mkdir fbp
     if not os.path.exists(SERVER_FILES_PATH):
