@@ -2,10 +2,11 @@ from pathlib import Path
 
 from matty_web import InvalidInputError
 from matty_web.models import User, add_user, init_db, is_valid_email, is_valid_username
-from matty_web.utils import PIC_PATH
+from matty_web.utils import PIC_PATH, init_data
 
 
 def test_add_user():
+    init_data()
     init_db()
     try:
         add_user(
