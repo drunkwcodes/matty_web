@@ -16,7 +16,7 @@ from peewee import DoesNotExist, IntegrityError
 from werkzeug.utils import secure_filename
 
 from .models import Profile, User, UserInfo
-from .utils import conf, hash_password, login_manager, verify_password
+from .utils import DPATH, PIC_PATH, conf, hash_password, login_manager, verify_password
 
 mbp = Blueprint("mbp", __name__)  # main bp
 
@@ -24,7 +24,7 @@ mbp = Blueprint("mbp", __name__)  # main bp
 fbp = Blueprint(
     "fbp",
     __name__,
-    static_folder=Path(conf["data_folder"]) / "server_files" / "public",
+    static_folder=DPATH / "server_files" / "public",
     static_url_path="/public",
     url_prefix="/files",
 )
@@ -132,12 +132,7 @@ def profile_pic_upload():
         filename_suffix = Path(filename).suffix  # 取得檔案副檔名
 
         # 儲存檔案到指定的目錄中
-        file.save(
-            Path(conf["data_folder"])
-            / "server_files"
-            / "profile_pic"
-            / f"{username}{filename_suffix}"
-        )
+        file.save(PIC_PATH / f"{username}{filename_suffix}")
 
         current_user.picture = f"{username}{filename_suffix}"
         current_user.save()
@@ -161,11 +156,9 @@ def get_profile_pic(user_id):
             abort(404, description="User not found.")
 
     if user.picture:
-        PIC_PATH = (
-            Path(conf["data_folder"]) / "server_files" / "profile_pic" / user.picture
-        )
-        if PIC_PATH.is_file():
-            return send_from_directory(str(PIC_PATH.parent), PIC_PATH.name)
+        pic_path = PIC_PATH / user.picture
+        if pic_path.is_file():
+            return send_from_directory(str(pic_path.parent), pic_path.name)
     else:
         abort(404, "Profile picture not found.")
 

@@ -30,7 +30,11 @@ class InvalidInputError(Exception):
     pass
 
 
-DPATH = Path(conf["data_folder"])
+if not Path(conf["data_folder"]).parent.exists():  # The folder contains data not exists
+    DPATH = Path(__file__).parent.parent.parent / "data"
+else:
+    DPATH = Path(conf["data_folder"])
+
 SERVER_FILES_PATH = DPATH / "server_files"
 PIC_PATH = DPATH / "server_files" / "profile_pic"
 MATERIAL_PATH = DPATH / "server_files" / "materials"

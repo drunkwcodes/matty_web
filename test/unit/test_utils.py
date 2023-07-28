@@ -1,8 +1,9 @@
 import os
+from pathlib import Path
 
 from matty_web.models import User, add_user
 from matty_web.utils import (
-    conf,
+    DPATH,
     generate_password,
     hash_password,
     init_data,
@@ -13,7 +14,7 @@ from matty_web.utils import (
 
 def test_init_data():
     init_data()
-    assert os.path.exists(conf["data_folder"])
+    assert Path(DPATH).exists()
 
 
 def test_generate_password():

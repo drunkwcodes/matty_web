@@ -9,6 +9,7 @@ from flask_login import UserMixin
 from werkzeug.utils import secure_filename
 
 from matty_web.utils import (
+    DPATH,
     PIC_PATH,
     InvalidInputError,
     conf,
@@ -17,7 +18,7 @@ from matty_web.utils import (
     is_email,
 )
 
-db_path = Path(conf["data_folder"]) / "test.sqlite"
+db_path = DPATH / "test.sqlite"
 db = peewee.SqliteDatabase(db_path, check_same_thread=False)
 
 
