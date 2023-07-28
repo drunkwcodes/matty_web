@@ -5,6 +5,7 @@ from flask import (
     Blueprint,
     abort,
     flash,
+    jsonify,
     redirect,
     render_template,
     request,
@@ -15,8 +16,18 @@ from flask_login import current_user, login_user, logout_user
 from peewee import DoesNotExist, IntegrityError
 from werkzeug.utils import secure_filename
 
-from .models import Profile, User, UserInfo
-from .utils import DPATH, PIC_PATH, conf, hash_password, login_manager, verify_password
+from .models import Profile, User, UserInfo, add_user, is_valid_email, is_valid_username
+from .utils import (
+    DPATH,
+    PIC_PATH,
+    SERVER_FILES_PATH,
+    InvalidInputError,
+    hash_password,
+    login_manager,
+    verify_password,
+)
+
+apibp = Blueprint("apibp", __name__, url_prefix="/api")
 
 mbp = Blueprint("mbp", __name__)  # main bp
 
@@ -24,7 +35,7 @@ mbp = Blueprint("mbp", __name__)  # main bp
 fbp = Blueprint(
     "fbp",
     __name__,
-    static_folder=DPATH / "server_files" / "public",
+    static_folder=SERVER_FILES_PATH / "public",
     static_url_path="/public",
     url_prefix="/files",
 )
@@ -38,7 +49,17 @@ def avatar_url():
 
 
 def profile_pic_url(user_id):
-    return url_for("fbp.get_profile_pic", user_id=user_id)
+    try:
+        user = User.get_by_id(user_id)
+    except DoesNotExist:
+        url = url_for("static", filename="Sample_User_Icon.png")
+
+    if user.picture:
+        url = url_for("fbp.get_profile_pic", user_id=user_id)
+    else:
+        url = url_for("static", filename="Sample_User_Icon.png")
+
+    return url
 
 
 @mbp.route("/")
@@ -85,6 +106,49 @@ def login():
         else:
             flash("Email incorrect.")
             return redirect(url_for("mbp.login"))  # TODO: 或是顯示錯誤訊息
+
+
+@mbp.route("/register", methods=["GET", "POST"])
+def register():
+    if request.method == "GET":
+        return render_template("register.html")
+
+    elif request.method == "POST":
+        email = request.form.get("email")
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        if not is_valid_email(email) or not is_valid_username(username):
+            flash("Register failed. Invalid email and username.")
+            return redirect(url_for("mbp.index"))
+
+        # start registering
+        try:
+            user, _ = add_user(email=email, username=username, password=password)
+        except InvalidInputError:
+            flash("Register failed. Invalid email and username.")
+            return redirect(url_for("mbp.index"))
+
+        login_user(user)
+        flash("Register successfully.")
+
+        return redirect(url_for("mbp.index"))
+
+
+@apibp.route("/username/<string:usn>")
+def username_api(usn):
+    if is_valid_username(usn):
+        return jsonify({"valid": True})
+    else:
+        return jsonify({"valid": False})
+
+
+@apibp.route("/email/<string:eml>")
+def email_api(eml):
+    if is_valid_email(eml):
+        return jsonify({"valid": True})
+    else:
+        return jsonify({"valid": False})
 
 
 @mbp.route("/profile")

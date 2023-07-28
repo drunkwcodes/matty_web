@@ -14,6 +14,11 @@
   <!-- 在這裡添加您的內容 -->
   {% include 'navbar.html' %}
 
+  {% if not current_user.is_authenticated %}
+  <div class="center-align"> <!-- This will center the button horizontally -->
+    <a id="register_button" class="waves-effect waves-light btn" href="/register">Register</a>
+  </div>
+  {% endif %}
 
   <script src="{{ url_for('static', filename='js/materialize.js') }}"></script>
   <script src="{{ url_for('static', filename='js/jquery-3.7.0.js') }}"></script>

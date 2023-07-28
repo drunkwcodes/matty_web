@@ -49,3 +49,11 @@
   transition: all .3s cubic-bezier(.175, .885, .32, 1.275);
   color: #999;
 }
+
+#register_button {
+  position: absolute; /* This allows centering the button */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* This centers the button both horizontally and vertically */
+  /* Add more styles as needed */
+}

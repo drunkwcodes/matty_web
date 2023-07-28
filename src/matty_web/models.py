@@ -123,6 +123,8 @@ def add_user(email="", username="", password=""):
     """新增使用者，成功 return (User(), password), 失敗 raise InvalidInputError.
 
     Required field: email
+
+    Raises: InvalidInputError
     """
 
     if not email:

@@ -8,7 +8,7 @@ from flask_login import current_user
 
 from matty_web.models import Post, User, UserInfo, db_path, init_db
 from matty_web.utils import DPATH, conf, init_data, login_manager
-from matty_web.views import avatar_url, fbp, mbp
+from matty_web.views import apibp, avatar_url, fbp, mbp
 
 
 class UserAdmin(ModelView):
@@ -71,6 +71,7 @@ def main():
     )  # the router will route to the first registered view.
     app.register_blueprint(mbp)
     app.register_blueprint(fbp)
+    app.register_blueprint(apibp)
 
     app.run(debug=True)
 
